@@ -1,11 +1,9 @@
 <div class="solicitudes-container">
 
-  <!-- TOP BANNER -->
   <div class="top-banner">
     <img src="/assets/gov-logo.png" alt="GOV.CO" class="top-banner-logo-img" />
   </div>
 
-  <!-- HEADER -->
   <header class="header">
     <div class="logo">
       <h1>PQRSync</h1>
@@ -15,188 +13,183 @@
     </div>
   </header>
 
-  <!-- TITULO -->
   <section class="title-section">
     <h2>Solicitudes Asignadas</h2>
     <p>Visualiza y responde las solicitudes PQRS.</p>
   </section>
 
-  <!-- PANEL DE MÓDULOS -->
   <section class="modulos-section">
     <div class="panel">
 
       <div class="panel-header">
         <span class="panel-title">Solicitudes activas</span>
-        <span class="panel-count">{{ solicitudes.length }}</span>
+        <span class="panel-count">{{ solicitudes().length }}</span>
       </div>
 
       <div class="modulo-container">
-        <div
-          class="card"
-          *ngFor="let solicitud of solicitudes"
-          (click)="openModal(solicitud)"
-          role="button"
-          tabindex="0"
-        >
-          <span class="status status--{{ solicitud.status | lowercase }} card-status">
-            {{ solicitud.status }}
-          </span>
+        @for (solicitud of solicitudes(); track solicitud.id) {
+          <div
+            class="card"
+            (click)="openModal(solicitud)"
+            role="button"
+            tabindex="0"
+            (keydown.enter)="openModal(solicitud)"
+          >
+            <span class="status card-status">{{ solicitud.status }}</span>
 
-          <span class="card-accent"></span>
+            <span class="card-accent"></span>
 
-          <div class="card-body">
-            <div class="card-top">
-              <span class="card-type">{{ (solicitud.clasificacion_funcionario ?? solicitud.clasificacion_usuario).toUpperCase() }}</span>
+            <div class="card-body">
+              <div class="card-top">
+                <span class="card-type">
+                  {{ (solicitud.clasificacion_funcionario ?? solicitud.clasificacion_usuario)?.toUpperCase() }}
+                </span>
+              </div>
+              <p class="card-date">{{ solicitud.created_at | date: 'short' }}</p>
+              <p class="card-ref">#{{ solicitud.ref_number }}</p>
             </div>
-            <p class="card-date">{{ solicitud.created_at | date:'short' }}</p>
-            <p class="card-ref">#{{ solicitud.ref_number }}</p>
           </div>
-
-          <div class="card-footer">
-            <span class="card-sender">{{ solicitud.created_by }}</span>
-          </div>
-        </div>
+        } @empty {
+          <p class="no-files">📭 No tienes solicitudes asignadas.</p>
+        }
       </div>
 
     </div>
   </section>
 
-  <!-- MODAL DE VISUALIZACIÓN -->
-  <div class="modal-backdrop" *ngIf="modalOpen" (click)="closeModal()">
-    <div class="modal" (click)="$event.stopPropagation()">
+  @if (modalOpen() && selectedSolicitud(); as solicitud) {
+    <div class="modal-backdrop" (click)="closeModal()">
+      <div class="modal" (click)="$event.stopPropagation()">
 
-      <!-- HEADER -->
-      <div class="modal-header">
-        <div class="modal-title-group">
-          <span class="modal-eyebrow">Solicitud</span>
-          <h2 class="modal-title">{{ (selectedSolicitud?.clasificacion_funcionario ?? selectedSolicitud?.clasificacion_usuario)?.toUpperCase() }}</h2>
-        </div>
-        <div class="modal-header-meta">
-          <span class="status status--{{ selectedSolicitud?.status | lowercase }}">
-            {{ selectedSolicitud?.status }}
-          </span>
-          <button class="close-btn" (click)="closeModal()" aria-label="Cerrar">✕</button>
-        </div>
-      </div>
-      
-      <!-- META ROW: ref + fecha + remitente en una sola fila -->
-      <div class="modal-section modal-section--grid">
-        <h4>
-          <p>ASIGNADA POR: {{ selectedSolicitud?.quien_asigno_solicitud}}</p>
-        </h4>
-        <div>
-          <h4>Clasificación</h4>
-          
-          <p>{{ (selectedSolicitud?.clasificacion_funcionario ?? selectedSolicitud?.clasificacion_usuario)?.toUpperCase() }}</p>
-          <span class="reclasificacion-badge" *ngIf="selectedSolicitud?.clasificacion_funcionario">
-            ✏️ Reclasificado por funcionario
-          </span>
-          <button class="btn-reclasificar" (click)="openReclasificacion()">🔁 Reclasificar</button>
-        </div>
-        <div>
-          <h4>Referencia</h4>
-          <p>#{{ selectedSolicitud?.ref_number }}</p>
+        <div class="modal-header">
+          <div class="modal-title-group">
+            <span class="modal-eyebrow">Solicitud</span>
+            <h2 class="modal-title">
+              {{ (solicitud.clasificacion_funcionario ?? solicitud.clasificacion_usuario)?.toUpperCase() }}
+            </h2>
+          </div>
+          <div class="modal-header-meta">
+            <span class="status">{{ solicitud.status }}</span>
+            <button class="close-btn" (click)="closeModal()" aria-label="Cerrar">✕</button>
+          </div>
         </div>
 
-        <div>
-          <h4>Remitente</h4>
-          <p>{{ remitente?.name }} {{ remitente?.surname}}</p>
+        <div class="modal-section modal-section--grid">
+          <div>
+            <h4>Asignada por</h4>
+            <p>{{ solicitud.quien_asigno_solicitud || 'Sin registro' }}</p>
+          </div>
+          <div>
+            <h4>Clasificación</h4>
+            <p>{{ (solicitud.clasificacion_funcionario ?? solicitud.clasificacion_usuario)?.toUpperCase() }}</p>
+            @if (solicitud.clasificacion_funcionario) {
+              <span class="reclasificacion-badge">✏️ Reclasificado por funcionario</span>
+            }
+            <button class="btn-reclasificar" (click)="openReclasificacion()">🔁 Reclasificar</button>
+          </div>
+          <div>
+            <h4>Referencia</h4>
+            <p>#{{ solicitud.ref_number }}</p>
+          </div>
+          <div>
+            <h4>Remitente</h4>
+            <p>{{ remitente()?.name }} {{ remitente()?.surname }}</p>
+            <p>{{ solicitud.email }}</p>
+          </div>
+          <div>
+            <h4>Fecha</h4>
+            <p>{{ solicitud.created_at | date: 'yyyy-MM-dd' }}</p>
+          </div>
+          <div>
+            <h4>Hora</h4>
+            <p>{{ solicitud.created_at | date: 'HH:mm:ss' }}</p>
+          </div>
         </div>
 
-        <div>
-          <h4>Fecha</h4>
-          <p>{{ selectedSolicitud?.created_at | date:'yyyy-MM-dd' }}</p>
-        </div>
+        <div class="modal-section">
+          <h4>Contenido de la solicitud</h4>
+          <p class="request-text">{{ solicitud.request }}</p>
 
-        <div>
-          <h4>Hora</h4>
-          <p>{{ selectedSolicitud?.created_at | date:'HH:mm:ss' }}</p>
-        </div>
+          <div class="attachments-section">
+            <h5 class="attachments-title">📎 Archivos adjuntos</h5>
 
-      </div>
-
-      <!-- SOLICITUD -->
-      <div class="modal-section">
-        <h4>Contenido de la solicitud</h4>
-        <p class="request-text">{{ selectedSolicitud?.request }}</p>
-        
-        <!-- ARCHIVOS ADJUNTOS -->
-        <div class="attachments-section">
-          <h5 class="attachments-title">📎 Archivos adjuntos</h5>
-
-          <ng-container *ngIf="selectedSolicitud?.files?.length; else noFiles">
-            <div class="attachments-list">
-              <div class="attachment-row" *ngFor="let file of selectedSolicitud.files">
-                <span class="file-info">
-                  🗂️ <strong>{{ file.filename }}</strong>
-                  <span class="file-meta">{{ file.filetype }} · {{ file.filesize }}</span>
-                </span>
+            @if (solicitud.archivos.length > 0) {
+              <div class="attachments-list">
+                @for (archivo of solicitud.archivos; track archivo.id) {
+                  <div class="attachment-row">
+                    <span class="file-info">
+                      🗂️ <strong>{{ archivo.filename }}</strong>
+                    </span>
+                    <button
+                      type="button"
+                      class="btn-reclasificar"
+                      (click)="descargarArchivo(archivo)">
+                      ⬇️ Descargar
+                    </button>
+                  </div>
+                }
               </div>
-            </div>
-            <button class="btn-reclasificar" (click)="downloadAllFiles(selectedSolicitud)">
-              ⬇️ Descargar todos los archivos
+            } @else {
+              <p class="no-files">📭 No se proporcionaron archivos adjuntos</p>
+            }
+          </div>
+        </div>
+
+        <div class="modal-section">
+          <h4>Zona de respuesta</h4>
+          <textarea rows="5" placeholder="Escribe tu respuesta aquí..." [(ngModel)]="respuesta"></textarea>
+          <div class="send-row">
+            <span class="send-hint">
+              La respuesta se enviará al remitente por el medio que seleccionó al radicar.
+            </span>
+            <button
+              class="send-btn"
+              (click)="responder()"
+              [disabled]="enviandoRespuesta()">
+              {{ enviandoRespuesta() ? 'Enviando...' : '📩 Enviar respuesta' }}
             </button>
-          </ng-container>
-
-          <ng-template #noFiles>
-            <p class="no-files">📭 No se proporcionaron archivos adjuntos</p>
-          </ng-template>
+          </div>
         </div>
-      </div>
 
-      <!-- RESPUESTA -->
-      <div class="modal-section">
-        <h4>Zona de respuesta</h4>
-        <textarea rows="5" placeholder="Escribe tu respuesta aquí..." [(ngModel)]="respuesta"></textarea>
-        <div class="send-row">
-          <span class="send-hint">La respuesta será enviada al remitente por el método de respuesta que este haya seleccionado.</span>
-          <button class="send-btn" (click)="responder(selectedSolicitud, respuesta)">
-            📩 Enviar respuesta
-          </button>
-        </div>
       </div>
-
     </div>
-  </div>
+  }
 
-  <!-- MODAL RECLASIFICACIÓN -->
-  <div class="modal-backdrop" *ngIf="reclasificacionOpen" (click)="closeReclasificacion()">
-    <div class="modal modal--sm" (click)="$event.stopPropagation()">
+  @if (reclasificacionOpen() && selectedSolicitud(); as solicitud) {
+    <div class="modal-backdrop" (click)="closeReclasificacion()">
+      <div class="modal modal--sm" (click)="$event.stopPropagation()">
 
-      <div class="modal-header">
-        <div class="modal-title-group">
-          <span class="modal-eyebrow">Solicitud #{{ selectedSolicitud?.ref_number }}</span>
-          <h2 class="modal-title">Reclasificar solicitud</h2>
+        <div class="modal-header">
+          <div class="modal-title-group">
+            <span class="modal-eyebrow">Solicitud #{{ solicitud.ref_number }}</span>
+            <h2 class="modal-title">Reclasificar solicitud</h2>
+          </div>
+          <button class="close-btn" (click)="closeReclasificacion()">✕</button>
         </div>
-        <button class="close-btn" (click)="closeReclasificacion()">✕</button>
-      </div>
 
-      <div class="modal-section">
-        <h4>Clasificación original del usuario</h4>
-        <p class="request-text">{{ selectedSolicitud?.clasificacion_usuario?.toUpperCase() }}</p>
-      </div>
+        <div class="modal-section">
+          <h4>Clasificación original del usuario</h4>
+          <p class="request-text">{{ solicitud.clasificacion_usuario?.toUpperCase() }}</p>
+        </div>
 
-      <div class="modal-section">
-        <h4>Nueva clasificación del funcionario</h4>
-        <select [(ngModel)]="nuevaClasificacion">
-          <option value="">— Selecciona un tipo —</option>
-          <option value="Petición">Petición</option>
-          <option value="Queja">Queja</option>
-          <option value="Reclamo">Reclamo</option>
-          <option value="Sugerencia">Sugerencia</option>
-        </select>
-      </div>
+        <div class="modal-section">
+          <h4>Nueva clasificación del funcionario</h4>
+          <select [(ngModel)]="nuevaClasificacion">
+            <option value="">— Selecciona un tipo —</option>
+            @for (tipo of clasificaciones; track tipo) {
+              <option [value]="tipo">{{ tipo }}</option>
+            }
+          </select>
+        </div>
 
-      <div class="modal-section send-row">
-        <button class="send-btn" (click)="guardarReclasificacion(selectedSolicitud)">
-          💾 Guardar reclasificación
-        </button>
-      </div>
+        <div class="modal-section send-row">
+          <button class="send-btn" (click)="guardarReclasificacion()">💾 Guardar reclasificación</button>
+        </div>
 
+      </div>
     </div>
-  </div>
-  
-  <!-- CONTACTO -->
+  }
+
   <section class="contact-section">
     <h3>Contacto</h3>
     <div class="contact-grid">
@@ -223,7 +216,6 @@
     </div>
   </section>
 
-  <!-- FOOTER -->
   <footer class="footer">
     <div class="footer-brand">
       <div class="footer-logo-box">

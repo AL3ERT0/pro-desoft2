@@ -1,69 +1,73 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { SupabaseService } from '../../services/supabase.service';
+import { AuthService } from '../../core/auth/auth.service';
+import { COLOR_ESTADO, type Estado } from '../../core/models/pqrs.types';
+import { aEstado } from '../../core/utils/pqrs.utils';
 import Swal from 'sweetalert2';
+import type { TableRow } from '../../core/models/database.types';
 
 @Component({
   selector: 'app-mis-pqrs',
   standalone: true,
   imports: [RouterModule, CommonModule],
   templateUrl: './mis-pqrs.html',
-  styleUrl: './mis-pqrs.scss'
+  styleUrl: './mis-pqrs.scss',
 })
 export class MisPqrsComponent implements OnInit {
+  private readonly supabase = inject(SupabaseService);
+  private readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
 
-  solicitudes: any[] = [];
-  cargando = true;
+  readonly solicitudes = signal<TableRow<'requests'>[]>([]);
+  readonly cargando = signal(true);
 
-  modalOpen = false;
-  cargandoDetalle = false;
-  solicitudSeleccionada: any = null;
-  respuestaDetalle: any = null;
+  readonly modalOpen = signal(false);
+  readonly cargandoDetalle = signal(false);
+  readonly solicitudSeleccionada = signal<TableRow<'requests'> | null>(null);
+  readonly respuestaDetalle = signal<TableRow<'request_responses'> | null>(null);
 
-  constructor(
-    private supabase: SupabaseService,
-    private router: Router,
-    private cdr: ChangeDetectorRef
-  ) {}
+  /** Evita mostrar una lista vacía si `profile_id` fuera nulo. */
+  private readonly puedeConsultar = computed(() => this.auth.estaAutenticado());
 
-  async ngOnInit() {
+  async ngOnInit(): Promise<void> {
     try {
-      const { data: { user } } = await this.supabase.client.auth.getUser();
+      await this.auth.ensureLoaded();
+      const usuarioId = this.auth.idUsuario();
 
-      if (!user) {
-        this.router.navigate(['']);
+      if (!usuarioId) {
+        this.cargando.set(false);
         return;
       }
 
       const { data, error } = await this.supabase.client
         .from('requests')
         .select('*')
-        .eq('profile_id', user.id)
+        .eq('profile_id', usuarioId)
         .order('created_at', { ascending: false });
 
       if (error) {
-        Swal.fire('Error', 'No se pudieron cargar tus solicitudes', 'error');
-      } else {
-        this.solicitudes = data ?? [];
+        await Swal.fire('Error', 'No se pudieron cargar tus solicitudes', 'error');
+        return;
       }
 
-    } catch (err) {
-      Swal.fire('Error', 'Error inesperado al cargar', 'error');
+      this.solicitudes.set(data ?? []);
+    } catch (error) {
+      console.error('[MisPqrsComponent.ngOnInit]', error);
+      await Swal.fire('Error', 'Error inesperado al cargar', 'error');
     } finally {
-      this.cargando = false;
-      this.cdr.detectChanges();
+      this.cargando.set(false);
     }
   }
 
-  async verDetalle(solicitud: any) {
-    this.solicitudSeleccionada = solicitud;
-    this.respuestaDetalle = null;
-    this.modalOpen = true;
-    this.cargandoDetalle = true;
-    this.cdr.detectChanges();
+  async verDetalle(solicitud: TableRow<'requests'>): Promise<void> {
+    this.solicitudSeleccionada.set(solicitud);
+    this.respuestaDetalle.set(null);
+    this.modalOpen.set(true);
+    this.cargandoDetalle.set(true);
 
-    const { data, error } = await this.supabase.client
+    const { data } = await this.supabase.client
       .from('request_responses')
       .select('*')
       .eq('request_id', solicitud.id)
@@ -71,29 +75,27 @@ export class MisPqrsComponent implements OnInit {
       .limit(1)
       .maybeSingle();
 
-    if (!error && data) {
-      this.respuestaDetalle = data;
-    }
-
-    this.cargandoDetalle = false;
-    this.cdr.detectChanges();
+    this.respuestaDetalle.set(data);
+    this.cargandoDetalle.set(false);
   }
 
-  cerrarModal() {
-    this.modalOpen = false;
-    this.solicitudSeleccionada = null;
-    this.respuestaDetalle = null;
+  cerrarModal(): void {
+    this.modalOpen.set(false);
+    this.solicitudSeleccionada.set(null);
+    this.respuestaDetalle.set(null);
   }
 
-  getEstadoColor(estado: string): string {
-    switch (estado?.toLowerCase()) {
-      case 'resuelto':    return '#22c55e';
-      case 'en proceso':  return '#f59e0b';
-      default:            return '#870fa2';
-    }
+  /**
+   * Antes comparaba contra 'resuelto' y 'en proceso', valores que la base de
+   * datos nunca escribe: todos los estados salían con el color morado por
+   * defecto. Ahora se resuelve contra el enum real.
+   */
+  colorEstado(estado: string | null | undefined): string {
+    const canonical = aEstado(estado);
+    return canonical ? COLOR_ESTADO[canonical as Estado] : '#94a3b8';
   }
 
-  volver() {
-    this.router.navigate(['/dashboard']);
+  volver(): void {
+    void this.router.navigate(['/dashboard']);
   }
 }

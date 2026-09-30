@@ -1,6 +1,8 @@
+import { provideRouter } from '@angular/router';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { FuncionarioComponent } from './funcionario';
+import { provideNetworkStubs } from '../core/testing/test-doubles';
 
 describe('FuncionarioComponent', () => {
 
@@ -11,6 +13,7 @@ describe('FuncionarioComponent', () => {
 
     await TestBed.configureTestingModule({
       imports: [FuncionarioComponent],
+      providers: [provideRouter([]), provideNetworkStubs()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(FuncionarioComponent);

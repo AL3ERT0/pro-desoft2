@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { SupabaseService } from '../services/supabase.service';
+import { environment } from '../../environments/environment';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -10,45 +11,44 @@ import Swal from 'sweetalert2';
   standalone: true,
   imports: [FormsModule, CommonModule],
   templateUrl: './reset.password.html',
-  styleUrls: ['./reset.password.scss']
+  styleUrls: ['./reset.password.scss'],
 })
 export class ResetPasswordComponent implements OnInit {
+  private readonly supabase = inject(SupabaseService);
+  private readonly router = inject(Router);
 
   newPassword = '';
   confirmPassword = '';
   loading = false;
 
-  constructor(
-    private supabase: SupabaseService,
-    private router: Router
-  ) {}
+  /** Estado del enlace recibido por correo, para no finalizar si el token falla. */
+  readonly enlaceValido = signal<boolean | null>(null);
 
-async ngOnInit() {
-  const fullHash = window.location.href;
-  
-  
-  const match = fullHash.match(/access_token=([^&]+)/);
-  const refreshMatch = fullHash.match(/refresh_token=([^&]+)/);
+  async ngOnInit(): Promise<void> {
+    // El token viaja en el fragmento de la URL. El router usa
+    // `withHashLocation()`, así que llega dentro del hash y no como query string.
+    const hash = window.location.hash || window.location.search;
+    const parametros = new URLSearchParams(hash.replace(/^[#?]/, ''));
 
-  const accessToken = match ? match[1] : null;
-  const refreshToken = refreshMatch ? refreshMatch[1] : null;
+    const accessToken = parametros.get('access_token');
+    const refreshToken = parametros.get('refresh_token');
 
-  console.log('Access token:', accessToken);
-  console.log('Refresh token:', refreshToken);
+    if (!accessToken || !refreshToken) {
+      this.enlaceValido.set(false);
+      return;
+    }
 
-  if (accessToken && refreshToken) {
-    const { data, error } = await this.supabase.client.auth.setSession({
+    const { error } = await this.supabase.client.auth.setSession({
       access_token: accessToken,
-      refresh_token: refreshToken
+      refresh_token: refreshToken,
     });
-    console.log('Sesión seteada:', data);
-    console.log('Error sesión:', error);
-  } else {
-    console.log('No se encontraron tokens');
-  }
-}
 
-  async resetPassword() {
+    // No se registra el token: `console.log` de un access_token filtra la
+    // sesión completa en la consola del navegador.
+    this.enlaceValido.set(error === null);
+  }
+
+  async resetPassword(): Promise<void> {
     if (!this.newPassword || !this.confirmPassword) {
       Swal.fire('Error', 'Todos los campos son obligatorios', 'error');
       return;
@@ -67,7 +67,7 @@ async ngOnInit() {
     this.loading = true;
     try {
       const { error } = await this.supabase.client.auth.updateUser({
-        password: this.newPassword
+        password: this.newPassword,
       });
 
       if (error) {
@@ -77,14 +77,19 @@ async ngOnInit() {
           icon: 'success',
           title: '¡Contraseña actualizada!',
           text: 'Ya puedes iniciar sesión con tu nueva contraseña.',
-          confirmButtonColor: '#870fa2'
+          confirmButtonColor: '#870fa2',
         });
-        setTimeout(() => this.router.navigate(['']), 2000);
+        await this.router.navigate(['/']);
       }
     } catch {
       Swal.fire('Error', 'Ocurrió un error inesperado', 'error');
     } finally {
       this.loading = false;
     }
+  }
+
+  /** Enlace que ya se usó: lleva a pedir uno nuevo en lugar de a la portada. */
+  irARecuperar(): void {
+    window.location.href = environment.passwordRecoveryRedirectTo;
   }
 }

@@ -17,116 +17,126 @@
 
     <div class="page-title">
       <h2>📋 Mis PQRS</h2>
-      <p *ngIf="solicitudes.length > 0">
-        Has registrado {{ solicitudes.length }} solicitud{{ solicitudes.length === 1 ? '' : 'es' }}.
-      </p>
-      <p *ngIf="solicitudes.length === 0">
-        Aquí puedes ver todas las solicitudes que has enviado.
-      </p>
+      @if (solicitudes().length > 0) {
+        <p>
+          Has registrado {{ solicitudes().length }}
+          solicitud{{ solicitudes().length === 1 ? '' : 'es' }}.
+        </p>
+      } @else {
+        <p>Aquí puedes ver todas las solicitudes que has enviado.</p>
+      }
     </div>
 
-    <div *ngIf="cargando" class="loading">Cargando tus solicitudes...</div>
-
-    <div *ngIf="!cargando && solicitudes.length === 0" class="empty">
-      <div class="empty-icon">📭</div>
-      <h3>No tienes solicitudes aún</h3>
-      <p>Cuando envíes una PQRS aparecerá aquí</p>
-      <button class="btn-ir" routerLink="/dashboard">Ir al inicio</button>
-    </div>
-
-    <div *ngIf="!cargando && solicitudes.length > 0" class="tabla-wrapper">
-      <table class="tabla">
-        <thead>
-          <tr>
-            <th>Radicado</th>
-            <th>Tipo</th>
-            <th>Descripción</th>
-            <th>Fecha</th>
-            <th>Estado</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            *ngFor="let s of solicitudes"
-            (click)="verDetalle(s)"
-            style="cursor:pointer">
-            <td class="radicado">{{ s.ref_number || s.id }}</td>
-            <td>{{ s.clasificacion_usuario | titlecase }}</td>
-            <td>{{ s.request }}</td>
-            <td>{{ s.created_at | date:'dd/MM/yyyy' }}</td>
-            <td>
-              <span class="estado-badge" [style.background]="getEstadoColor(s.status)">
-                {{ s.status || 'Radicado' }}
-              </span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    @if (cargando()) {
+      <div class="loading">Cargando tus solicitudes...</div>
+    } @else if (solicitudes().length === 0) {
+      <div class="empty">
+        <div class="empty-icon">📭</div>
+        <h3>No tienes solicitudes aún</h3>
+        <p>Cuando envíes una PQRS aparecerá aquí</p>
+        <button class="btn-ir" routerLink="/">Ir al inicio</button>
+      </div>
+    } @else {
+      <div class="tabla-wrapper">
+        <table class="tabla">
+          <thead>
+            <tr>
+              <th>Radicado</th>
+              <th>Tipo</th>
+              <th>Descripción</th>
+              <th>Fecha</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (s of solicitudes(); track s.id) {
+              <tr (click)="verDetalle(s)" style="cursor:pointer">
+                <td class="radicado">{{ s.ref_number || s.id }}</td>
+                <td>{{ s.clasificacion_usuario | titlecase }}</td>
+                <td>{{ s.request }}</td>
+                <td>{{ s.created_at | date: 'dd/MM/yyyy' }}</td>
+                <td>
+                  <span class="estado-badge" [style.background]="colorEstado(s.status)">
+                    {{ s.status || 'Radicada' }}
+                  </span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
 
   </main>
 
-  <!-- MODAL DETALLE -->
-  <div class="modal-overlay" *ngIf="modalOpen" (click)="cerrarModal()">
-    <div class="modal-card" (click)="$event.stopPropagation()">
+  @if (modalOpen()) {
+    <div class="modal-overlay" (click)="cerrarModal()">
+      <div class="modal-card" (click)="$event.stopPropagation()">
 
-      <button class="modal-close" (click)="cerrarModal()">✕</button>
+        <button class="modal-close" (click)="cerrarModal()">✕</button>
 
-      <div class="modal-header">
-        <div class="modal-icon">📋</div>
-        <h2>Estado de tu solicitud</h2>
-        <p>#{{ solicitudSeleccionada?.ref_number }}</p>
-      </div>
-
-      <div *ngIf="cargandoDetalle" class="loading">Cargando detalle...</div>
-
-      <div *ngIf="!cargandoDetalle" class="resultado-grid">
-
-        <div class="resultado-item">
-          <span class="resultado-label">Tipo</span>
-          <span class="resultado-valor">{{ solicitudSeleccionada?.clasificacion_usuario | titlecase }}</span>
+        <div class="modal-header">
+          <div class="modal-icon">📋</div>
+          <h2>Estado de tu solicitud</h2>
+          <p>#{{ solicitudSeleccionada()?.ref_number }}</p>
         </div>
 
-        <div class="resultado-item">
-          <span class="resultado-label">Estado</span>
-          <span class="estado-badge" [style.background]="getEstadoColor(solicitudSeleccionada?.status)">
-            {{ solicitudSeleccionada?.status | titlecase }}
-          </span>
-        </div>
+        @if (cargandoDetalle()) {
+          <div class="loading">Cargando detalle...</div>
+        } @else {
+          <div class="resultado-grid">
 
-        <div class="resultado-item">
-          <span class="resultado-label">Fecha de creación</span>
-          <span class="resultado-valor">{{ solicitudSeleccionada?.created_at | date:'dd/MM/yyyy' }}</span>
-        </div>
+            <div class="resultado-item">
+              <span class="resultado-label">Tipo</span>
+              <span class="resultado-valor">
+                {{ solicitudSeleccionada()?.clasificacion_usuario | titlecase }}
+              </span>
+            </div>
 
-        <div class="resultado-item">
-          <span class="resultado-label">Descripción</span>
-          <span class="resultado-valor">{{ solicitudSeleccionada?.request }}</span>
-        </div>
+            <div class="resultado-item">
+              <span class="resultado-label">Estado</span>
+              <span
+                class="estado-badge"
+                [style.background]="colorEstado(solicitudSeleccionada()?.status)">
+                {{ solicitudSeleccionada()?.status | titlecase }}
+              </span>
+            </div>
 
-        <!-- CON RESPUESTA -->
-        <ng-container *ngIf="respuestaDetalle; else sinRespuesta">
-          <div class="resultado-item">
-            <span class="resultado-label">Fecha de respuesta</span>
-            <span class="resultado-valor">{{ respuestaDetalle.created_at | date:'dd/MM/yyyy' }}</span>
+            <div class="resultado-item">
+              <span class="resultado-label">Fecha de creación</span>
+              <span class="resultado-valor">
+                {{ solicitudSeleccionada()?.created_at | date: 'dd/MM/yyyy' }}
+              </span>
+            </div>
+
+            <div class="resultado-item">
+              <span class="resultado-label">Descripción</span>
+              <span class="resultado-valor">{{ solicitudSeleccionada()?.request }}</span>
+            </div>
+
+            @if (respuestaDetalle(); as respuesta) {
+              <div class="resultado-item">
+                <span class="resultado-label">Fecha de respuesta</span>
+                <span class="resultado-valor">{{ respuesta.created_at | date: 'dd/MM/yyyy' }}</span>
+              </div>
+              <div class="resultado-item resultado-item--full">
+                <span class="resultado-label">Respuesta del funcionario</span>
+                <span class="resultado-valor respuesta-texto">{{ respuesta.response }}</span>
+              </div>
+            } @else {
+              <div class="resultado-item resultado-item--full sin-respuesta">
+                <span class="resultado-label">Respuesta</span>
+                <span class="resultado-valor">
+                  Tu solicitud aún no tiene respuesta. Te notificaremos cuando esté lista.
+                </span>
+              </div>
+            }
+
           </div>
-          <div class="resultado-item resultado-item--full">
-            <span class="resultado-label">Respuesta del funcionario</span>
-            <span class="resultado-valor respuesta-texto">{{ respuestaDetalle.response }}</span>
-          </div>
-        </ng-container>
-
-        <!-- SIN RESPUESTA -->
-        <ng-template #sinRespuesta>
-          <div class="resultado-item resultado-item--full sin-respuesta">
-            <span class="resultado-label">Respuesta</span>
-            <span class="resultado-valor">Tu solicitud aún no tiene respuesta. Te notificaremos cuando esté lista.</span>
-          </div>
-        </ng-template>
-
+        }
       </div>
     </div>
-  </div>
+  }
 
   <section class="contact-section">
     <h3>Contacto</h3>

@@ -1,11 +1,9 @@
 <div class="usuarios-container">
 
-  <!-- TOP BANNER -->
   <div class="top-banner">
     <img src="/assets/gov-logo.png" alt="GOV.CO" class="top-banner-logo-img" />
   </div>
 
-  <!-- HEADER -->
   <header class="header">
     <div class="logo">
       <h1>PQRSync</h1>
@@ -15,51 +13,57 @@
     </div>
   </header>
 
-  <!-- TITULO -->
   <section class="title-section">
     <h2>Gestionar Usuarios</h2>
     <p>Visualiza y administra los usuarios registrados en la plataforma.</p>
   </section>
 
-  <!-- TABLA -->
   <section class="table-section">
-    <table>
-      <thead>
-        <tr>
-          <th style="width: 130px">ID Usuario</th>
-          <th style="width: 150px">Nombre</th>
-          <th style="width: 150px">Apellido</th>
-          <th>Email</th>
-          <th style="width: 180px">Rol Actual</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let usuario of usuarios">
-          <td>{{ usuario.id | slice:0:8 }}...</td>
-          <td>{{ usuario.name ?? '—' }}</td>
-          <td>{{ usuario.surname ?? '—' }}</td>
-          <td>{{ usuario.email ?? '—' }}</td>
-          <td>
-            <select class="rol-select" [(ngModel)]="usuario.role_id" (ngModelChange)="usuario.role_id = $event">
-              <option *ngFor="let rol of roles" [ngValue]="rol.id">{{ rol.name }}</option>
-            </select>
-          </td>
-        </tr>
+    @if (cargando()) {
+      <p class="sin-resultados">Cargando usuarios...</p>
+    } @else {
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 130px">ID Usuario</th>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Documento</th>
+            <th style="width: 200px">Rol Actual</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (usuario of usuarios(); track usuario.id) {
+            <tr>
+              <td>{{ usuario.id | slice: 0 : 8 }}...</td>
+              <td>{{ usuario.name ?? '—' }}</td>
+              <td>{{ usuario.surname ?? '—' }}</td>
+              <td>{{ usuario.dni ?? '—' }}</td>
+              <td>
+                <select class="rol-select" [(ngModel)]="usuario.role_id">
+                  <option [ngValue]="null">Sin rol</option>
+                  @for (rol of roles(); track rol.id) {
+                    <option [ngValue]="rol.id">{{ rol.name }}</option>
+                  }
+                </select>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="5" class="sin-resultados">No hay usuarios registrados.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
 
-        <tr *ngIf="usuarios.length === 0">
-          <td colspan="5" class="sin-resultados">No hay usuarios registrados.</td>
-        </tr>
-      </tbody>
-    </table>
-
-    <div class="guardar-section">
-      <button class="btn-guardar" (click)="guardarCambios()" [disabled]="guardando">
-        {{ guardando ? 'Guardando...' : '💾 Guardar cambios' }}
-      </button>
-    </div>
+      <div class="guardar-section">
+        <button class="btn-guardar" (click)="guardarCambios()" [disabled]="guardando()">
+          {{ guardando() ? 'Guardando...' : '💾 Guardar cambios' }}
+        </button>
+      </div>
+    }
   </section>
 
-  <!-- CONTACTO -->
   <section class="contact-section">
     <h3>Contacto</h3>
     <div class="contact-grid">
@@ -86,7 +90,6 @@
     </div>
   </section>
 
-  <!-- FOOTER -->
   <footer class="footer">
     <div class="footer-brand">
       <div class="footer-logo-box">

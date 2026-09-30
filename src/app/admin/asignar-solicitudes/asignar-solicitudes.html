@@ -1,11 +1,9 @@
 <div class="asignar-container">
 
-  <!-- TOP BANNER -->
   <div class="top-banner">
     <img src="/assets/gov-logo.png" alt="GOV.CO" class="top-banner-logo-img" />
   </div>
 
-  <!-- HEADER -->
   <header class="header">
     <div class="logo">
       <h1>PQRSync</h1>
@@ -15,58 +13,64 @@
     </div>
   </header>
 
-  <!-- TITULO -->
   <section class="title-section">
     <h2>Asignar Solicitudes</h2>
     <p>Asigna las solicitudes PQRS pendientes a los funcionarios responsables.</p>
   </section>
 
-  <!-- TABLA -->
   <section class="table-section">
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Correo</th>
-          <th>Solicitud</th>
-          <th>Tipo</th>
-          <th>Estado</th>
-          <th>Encargar a</th>
-          <th>Acción</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let solicitud of solicitudes">
-          <td>{{ solicitud.id | slice:0:8 }}...</td>
-          <td>{{ solicitud.email }}</td>
-          <td>{{ solicitud.request }}</td>
-          <td>{{ solicitud.clasificacion_usuario | titlecase }}</td>
-          <td>
-            <span class="estado-badge">{{ solicitud.status }}</span>
-          </td>
-          <td>
-            <select class="func-select" [(ngModel)]="solicitud.func_id">
-              <option [ngValue]="null">Seleccionar</option>
-              <option *ngFor="let fun of funcionarios" [ngValue]="fun.id">
-                {{ fun.name }} {{ fun.surname }}
-              </option>
-            </select>
-          </td>
-          <td>
-            <button class="btn-asignar" (click)="asignarSolicitud(solicitud)">
-              Asignar
-            </button>
-          </td>
-        </tr>
-
-        <tr *ngIf="solicitudes.length === 0">
-          <td colspan="7" class="sin-resultados">No hay solicitudes pendientes.</td>
-        </tr>
-      </tbody>
-    </table>
+    @if (cargando()) {
+      <p class="sin-resultados">Cargando solicitudes...</p>
+    } @else {
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Correo</th>
+            <th>Solicitud</th>
+            <th>Tipo</th>
+            <th>Estado</th>
+            <th>Encargar a</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (solicitud of solicitudes(); track solicitud.id) {
+            <tr>
+              <td>{{ solicitud.id | slice: 0 : 8 }}...</td>
+              <td>{{ solicitud.email }}</td>
+              <td>{{ solicitud.request }}</td>
+              <td>{{ solicitud.clasificacion_usuario | titlecase }}</td>
+              <td>
+                <span class="estado-badge">{{ solicitud.status }}</span>
+              </td>
+              <td>
+                <select class="func-select" [(ngModel)]="solicitud.func_id">
+                  <option [ngValue]="null">Seleccionar</option>
+                  @for (fun of funcionarios(); track fun.id) {
+                    <option [ngValue]="fun.id">{{ nombreDe(fun) }}</option>
+                  }
+                </select>
+              </td>
+              <td>
+                <button
+                  class="btn-asignar"
+                  (click)="asignarSolicitud(solicitud)"
+                  [disabled]="asignandoId() === solicitud.id">
+                  {{ asignandoId() === solicitud.id ? 'Asignando...' : 'Asignar' }}
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="7" class="sin-resultados">No hay solicitudes pendientes.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
   </section>
 
-  <!-- CONTACTO -->
   <section class="contact-section">
     <h3>Contacto</h3>
     <div class="contact-grid">
@@ -93,7 +97,6 @@
     </div>
   </section>
 
-  <!-- FOOTER -->
   <footer class="footer">
     <div class="footer-brand">
       <div class="footer-logo-box">

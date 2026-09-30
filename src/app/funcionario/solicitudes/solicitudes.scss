@@ -262,10 +262,6 @@ textarea {
   margin-top: 0.2rem;
 }
 
-.nose {
-  display: contents
-}
-
 .modal--sm {
   max-width: 480px;
 }
@@ -386,20 +382,6 @@ textarea {
   flex-direction: column;
 }
 
-.top-banner {
-  background: #0A43B6;
-  padding: 8px 20px;
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-}
-
-.top-banner-logo-img {
-  height: 30px;
-  width: auto;
-  object-fit: contain;
-}
-
 .header {
   background: white;
   padding: 16px 30px;
@@ -440,119 +422,6 @@ textarea {
   h2 { color: #7b1fa2; margin-bottom: 10px; }
 }
 
-.filtros-section {
-  padding: 0 40px 24px;
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.filtro-btn {
-  padding: 8px 20px;
-  border: 2px solid #7b1fa2;
-  border-radius: 20px;
-  background: transparent;
-  color: #7b1fa2;
-  font-size: 0.88rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-
-  &:hover { background: #ede7f6; }
-  &.activo { background: #7b1fa2; color: white; }
-}
-
-.table-section {
-  padding: 0 40px 40px;
-  flex: 1;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: white;
-  border-radius: 12px;
-  overflow: hidden;
-}
-
-thead {
-  background: #7b1fa2;
-  color: white;
-}
-
-th, td {
-  padding: 16px;
-  text-align: left;
-  border-bottom: 1px solid #eee;
-}
-
-.estado-badge {
-  background: #ede7f6;
-  color: #512da8;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 14px;
-}
-
-.acciones {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-
-.btn-detalle {
-  background: #ede7f6;
-  color: #512da8;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 13px;
-  transition: 0.3s;
-
-  &:hover { background: #d1c4e9; }
-}
-
-.btn-responder {
-  background: linear-gradient(to right, #7b1fa2, #512da8);
-  color: white;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 13px;
-  transition: 0.3s;
-
-  &:hover { opacity: 0.9; }
-}
-
-.sin-resultados {
-  text-align: center;
-  color: #aaa;
-  padding: 30px;
-}
-
-.contact-section {
-  padding: 20px 30px;
-  background: linear-gradient(135deg, #870fa2, #4f1689);
-  text-align: center;
-
-  h3 {
-    color: white;
-    font-size: 1.3rem;
-    font-weight: 800;
-    margin-bottom: 18px;
-    margin-top: 0;
-  }
-}
-
-.contact-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 12px;
-  max-width: 700px;
-  margin: 0 auto;
-}
 
 .contact-card {
   background: rgba(255,255,255,0.12);
@@ -567,34 +436,6 @@ th, td {
   .contact-icon { font-size: 1.4rem; margin-bottom: 6px; }
   h4 { font-size: 0.88rem; font-weight: 700; margin-bottom: 4px; }
   p { font-size: 0.84rem; opacity: 0.85; margin: 0; }
-}
-
-.footer {
-  background: #0A43B6;
-  color: white;
-  padding: 20px 30px;
-}
-
-.footer-brand {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  flex-wrap: wrap;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.footer-logo-box {
-  height: 50px;
-  display: flex;
-  align-items: center;
-}
-
-.footer-logo-img {
-  max-width: 200px;
-  height: 50px;
-  object-fit: contain;
 }
 
 .footer-copy {

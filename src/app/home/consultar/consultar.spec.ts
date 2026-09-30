@@ -1,6 +1,7 @@
+﻿import { provideRouter } from '@angular/router';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { ConsultarComponent } from './consultar';
+import { provideNetworkStubs } from '../../core/testing/test-doubles';
 
 describe('ConsultarComponent', () => {
   let component: ConsultarComponent;
@@ -8,9 +9,9 @@ describe('ConsultarComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ConsultarComponent]
-    })
-    .compileComponents();
+      imports: [ConsultarComponent],
+      providers: [provideRouter([]), provideNetworkStubs()],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(ConsultarComponent);
     component = fixture.componentInstance;

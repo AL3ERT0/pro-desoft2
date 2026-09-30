@@ -98,3 +98,77 @@ html, body {
   padding: 0;
   height: 100%;
 }
+
+/* ============================================================
+   Chrome compartido de las pantallas PQRS.
+   Antes vivia duplicado en 10 archivos .scss de componente. Angular
+   encapsula los estilos por componente, asi que ahi se emitia una copia
+   por pantalla (~818 bytes cada una). Al ser identico en todas, va aqui
+   global: se emite una vez y desaparece de los budgets anyComponentStyle.
+   NO se unifican aqui .header, .nav, .logout-btn, .logo, .contact-card,
+   .footer-copy ni .gov-btn: difieren entre pantallas y esas diferencias
+   siguen declarandose en el componente que las necesita.
+   ============================================================ */
+.top-banner {
+  background: #0A43B6;
+  padding: 8px 20px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.top-banner-logo-img {
+  height: 30px;
+  width: auto;
+  object-fit: contain;
+}
+
+.contact-section {
+  padding: 20px 30px;
+  background: linear-gradient(135deg, #870fa2, #4f1689);
+  text-align: center;
+
+  h3 {
+    color: white;
+    font-size: 1.3rem;
+    font-weight: 800;
+    margin-bottom: 18px;
+    margin-top: 0;
+  }
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.footer {
+  background: #0A43B6;
+  color: white;
+  padding: 20px 30px;
+}
+
+.footer-brand {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.footer-logo-box {
+  height: 50px;
+  display: flex;
+  align-items: center;
+}
+
+.footer-logo-img {
+  max-width: 200px;
+  height: 50px;
+  object-fit: contain;
+}

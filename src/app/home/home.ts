@@ -1,8 +1,10 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { RouterModule, Router } from '@angular/router';
+import { Component, OnInit, inject } from '@angular/core';
+import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { SupabaseService } from '../services/supabase.service';
+import { AuthService } from '../core/auth/auth.service';
+import { environment } from '../../environments/environment';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -40,15 +42,15 @@ export class HomeComponent implements OnInit {
   loadingRegister = false;
 
   // Opciones para selects
-  gruposEtnicos: any[] = [];
-  tiposDocumento: any[] = [];
-  departamentos: any[] = [];
-  ciudades: any[] = [];
+  gruposEtnicos: { id: string; name: string }[] = [];
+  tiposDocumento: { id: string; name: string }[] = [];
+  departamentos: { id: string; name: string }[] = [];
+  ciudades: { id: string; name: string }[] = [];
 
   constructor(
     private supabase: SupabaseService,
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private auth: AuthService,
   ) {}
 
   async ngOnInit() {
@@ -76,15 +78,6 @@ export class HomeComponent implements OnInit {
     window.location.href = 'https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=65334';
   }
 
-  async documentoYaExiste(): Promise<boolean> {
-    const { data } = await this.supabase.client
-      .from('profiles')
-      .select('id')
-      .eq('dni', this.numeroDocumento)
-      .maybeSingle();
-    return !!data;
-  }
-
   async forgotPassword() {
     const { value: correo } = await Swal.fire({
       title: 'Recuperar contraseña',
@@ -99,7 +92,7 @@ export class HomeComponent implements OnInit {
 
     if (correo) {
       const { error } = await this.supabase.client.auth.resetPasswordForEmail(correo, {
-        redirectTo: 'http://localhost:4200/#/reset-password'
+        redirectTo: environment.passwordRecoveryRedirectTo,
       });
 
       if (error) {
@@ -115,109 +108,44 @@ export class HomeComponent implements OnInit {
     }
   }
 
-async login() {
-
-
-  /* VALIDAR CAMPOS */
-  if (!this.email || !this.password) {
-
-    Swal.fire(
-      'Error',
-      'Todos los campos son obligatorios',
-      'error'
-    );
-
-    return;
-  }
-
-  this.loadingLogin = true;
-
-  try {
-
-    /* LOGIN SUPABASE */
-    const { error } =
-      await this.supabase.signIn(
-        this.email,
-        this.password
-      );
-
-    /* ERROR LOGIN */
-    if (error) {
-
-      Swal.fire(
-        'Error',
-        'Correo o contraseña incorrectos',
-        'error'
-      );
-
+  async login(): Promise<void> {
+    if (!this.email || !this.password) {
+      Swal.fire('Error', 'Todos los campos son obligatorios', 'error');
       return;
     }
 
-    /* OBTENER ROL */
-    const userRole =
-      await this.supabase.getUserRole();
+    this.loadingLogin = true;
 
-    console.log('ROL:', userRole);
+    try {
+      const { error } = await this.supabase.signIn(this.email, this.password);
 
-    /* VALIDAR ROL */
-    if (!userRole) {
+      if (error) {
+        Swal.fire('Error', 'Correo o contraseña incorrectos', 'error');
+        return;
+      }
 
-      Swal.fire(
-        'Error',
-        'No se encontró el rol del usuario',
-        'error'
-      );
+      // `refrescar` lee el perfil y el rol desde la BD en una sola consulta,
+      // en lugar de deducir el rol de lo que el cliente acaba de escribir.
+      await this.auth.refrescar();
 
-      return;
+      if (!this.auth.rol()) {
+        await this.auth.cerrarSesion();
+        Swal.fire(
+          'Error',
+          'Tu cuenta no tiene un rol asignado. Contacta a la administración.',
+          'error',
+        );
+        return;
+      }
+
+      this.cerrarModales();
+      await this.router.navigateByUrl(this.auth.rutaInicio());
+    } catch {
+      Swal.fire('Error', 'Ocurrió un error inesperado', 'error');
+    } finally {
+      this.loadingLogin = false;
     }
-
-    /* LOGIN EXITOSO */
-    Swal.fire(
-      '¡Bienvenid@!',
-      'Has iniciado sesión correctamente.',
-      'success'
-    );
-
-    this.cerrarModales();
-
-    /* REDIRECCION SEGUN ROL */
-  setTimeout(() => {
-
-  const rol = userRole?.toLowerCase().trim();
-
-  console.log('ROL LIMPIO:', rol);
-
-  if (rol === 'admin') {
-
-    this.router.navigate(['/admin']);
-
-  } else if (rol === 'funcionario') {
-
-    this.router.navigate(['/funcionario']);
-
-  } else {
-
-    this.router.navigate(['/dashboard']);
-
   }
-
-}, 1000);
-  } catch {
-
-    Swal.fire(
-      'Error',
-      'Ocurrió un error inesperado',
-      'error'
-    );
-
-  } finally {
-
-    this.loadingLogin = false;
-
-  }
-
-
-}
   async register() {
     if (!this.nombre || !this.apellido || !this.tipoDocumento || !this.numeroDocumento ||
         !this.sexo || !this.edad || !this.grupoEtnico || !this.ciudad ||
@@ -251,37 +179,38 @@ async login() {
       return;
     }
 
-    const documentoDuplicado = await this.documentoYaExiste();
+    const documentoDuplicado = await this.supabase.documentoYaExiste(this.numeroDocumento);
     if (documentoDuplicado) {
-      Swal.fire('Error', 'Ya existe un usuario registrado con ese número de documento', 'error');
+      Swal.fire('Error', 'Ya existe un usuario registrado con ese numero de documento', 'error');
       return;
     }
 
     this.loadingRegister = true;
     try {
-      const { data, error } = await this.supabase.signUp(
-        this.emailReg,
-        this.passwordReg,
-        this.nombre,
-        this.apellido,
-        this.numeroDocumento,
-        this.tipoDocumento,
-        this.sexo,
-        this.edad,
-        this.grupoEtnico,
-        this.ciudad
-      );
+      const { error } = await this.supabase.signUp({
+        email: this.emailReg,
+        password: this.passwordReg,
+        nombre: this.nombre,
+        apellido: this.apellido,
+        numeroDocumento: this.numeroDocumento,
+        tipoDocumentoId: this.tipoDocumento,
+        sexo: this.sexo,
+        edad: this.edad as number,
+        grupoEtnicoId: this.grupoEtnico,
+        ciudadId: this.ciudad,
+      });
+
       if (error) {
         Swal.fire('Error', `No se pudo completar el registro: ${error.message}`, 'error');
-      } else {
-        Swal.fire({
-          icon: 'success',
-          title: '¡Registro exitoso!',
-          text: 'Se ha registrado un perfil con su cuenta de usuario',
-          showConfirmButton: true
-        });
-        setTimeout(() => this.abrirLogin(), 2000);
+        return;
       }
+
+      Swal.fire({
+        icon: 'success',
+        title: '¡Registro exitoso!',
+        text: 'Se ha registrado un perfil con su cuenta de usuario',
+      });
+      this.abrirLogin();
     } catch {
       Swal.fire('Error', 'Ha ocurrido un error inesperado. Vuelva a intentarlo', 'error');
     } finally {
@@ -289,7 +218,7 @@ async login() {
     }
   }
 
-  async showDepartments() {
+  async showDepartments(): Promise<void> {
     const { data, error } = await this.supabase.selectDepartments();
     if (error) {
       Swal.fire('Error', 'No se pudieron cargar los departamentos', 'error');
@@ -298,29 +227,27 @@ async login() {
     this.departamentos = data ?? [];
   }
 
-  async onDepartmentChange(departmentId: string) {
+  async onDepartmentChange(departmentId: string): Promise<void> {
     this.ciudad = '';
     this.ciudades = [];
-    this.cdr.detectChanges();
+
+    if (!departmentId) return;
 
     const { data, error } = await this.supabase.selectCities(departmentId);
     if (error) {
       Swal.fire('Error', 'No se pudieron cargar las ciudades', 'error');
       return;
     }
-
     this.ciudades = data ?? [];
-    this.cdr.detectChanges();
   }
 
-  async showEthnicGroups() {
-    const { data, error } = await this.supabase.selectEthnicGroup();
+  async showEthnicGroups(): Promise<void> {
+    const { data } = await this.supabase.selectEthnicGroup();
     this.gruposEtnicos = data ?? [];
   }
 
-  async showDocumentTypes() {
-    const { data, error } = await this.supabase.selectDocumentTypes();
+  async showDocumentTypes(): Promise<void> {
+    const { data } = await this.supabase.selectDocumentTypes();
     this.tiposDocumento = data ?? [];
   }
 }
-

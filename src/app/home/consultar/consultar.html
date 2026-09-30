@@ -11,7 +11,7 @@
       <h1>PQRSync</h1>
     </div>
     <nav class="nav">
-      <button class="logout-btn" routerLink="/dashboard">← Volver</button>
+      <button class="logout-btn" routerLink="/">← Volver</button>
     </nav>
   </header>
 
@@ -30,47 +30,43 @@
         <input type="text" [(ngModel)]="numeroRadicado" placeholder="Ej: PQR-123456789-123" />
       </div>
 
-      <button class="btn-consultar" (click)="consultarPQRS()">🔍 Consultar</button>
+      <button class="btn-consultar" (click)="consultarPQRS()" [disabled]="consultando()">{{ consultando() ? 'Consultando...' : '🔍 Consultar' }}</button>
 
       <!-- RESULTADO -->
-      <div *ngIf="ticket" class="resultado">
+      @if (ticket(); as encontrado) {
         <h3>📋 Estado de tu solicitud</h3>
         <div class="resultado-grid">
           <div class="resultado-item">
             <span class="resultado-label">Tipo</span>
-            <span class="resultado-valor">{{ ticket.clasificacion_usuario | titlecase }}</span>
+            <span class="resultado-valor">{{ encontrado.clasificacion_usuario | titlecase }}</span>
           </div>
           <div class="resultado-item">
             <span class="resultado-label">Estado</span>
-            <span class="resultado-valor estado-badge">{{ ticket.status | titlecase }}</span>
+            <span class="resultado-valor estado-badge">{{ encontrado.status | titlecase }}</span>
           </div>
           <div class="resultado-item">
             <span class="resultado-label">Fecha de creación</span>
-            <span class="resultado-valor">{{ ticket.created_at | date:'dd/MM/yyyy' }}</span>
+            <span class="resultado-valor">{{ encontrado.created_at | date: 'dd/MM/yyyy' }}</span>
           </div>
 
           <!-- CON RESPUESTA -->
-          <ng-container *ngIf="ticket.respuesta; else sinRespuesta">
+          @if (encontrado.respuesta; as respuesta) {
             <div class="resultado-item">
               <span class="resultado-label">Fecha de respuesta</span>
-              <span class="resultado-valor">{{ ticket.respuesta.created_at | date:'dd/MM/yyyy' }}</span>
+              <span class="resultado-valor">{{ respuesta.created_at | date: 'dd/MM/yyyy' }}</span>
             </div>
             <div class="resultado-item">
               <span class="resultado-label">Respuesta</span>
-              <span class="resultado-valor">{{ ticket.respuesta.response }}</span>
+              <span class="resultado-valor">{{ respuesta.response }}</span>
             </div>
-          </ng-container>
-
-          <!-- SIN RESPUESTA -->
-          <ng-template #sinRespuesta>
+          } @else {
             <div class="resultado-item sin-respuesta">
               <span class="resultado-label">Respuesta</span>
               <span class="resultado-valor">Tu solicitud aún no tiene respuesta. Te notificaremos cuando esté lista.</span>
             </div>
-          </ng-template>
-
+          }
         </div>
-      </div>
+      }
     </div>
   </main>
 

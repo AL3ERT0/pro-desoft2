@@ -4,15 +4,6 @@
   line-height: 1.6;
 }
 
-/* HEADER */
-.top-banner {
-  background: #0A43B6;
-  padding: 8px 20px;
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-}
-
 .top-banner-logo {
   display: inline-flex;
   align-items: center;
@@ -234,14 +225,6 @@
   font-weight: 800;
   margin-bottom: 18px;
   margin-top: 0;
-}
-
-.contact-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 12px;
-  max-width: 700px;
-  margin: 0 auto;
 }
 
 .contact-card {

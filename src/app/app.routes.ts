@@ -1,35 +1,105 @@
 import { Routes } from '@angular/router';
-import { HomeComponent } from './home/home';
-import { DashboardComponent } from './dashboard/dashboard';
-import { PeticionesComponent } from './home/pages/peticiones/peticiones';
-import { QuejasComponent } from './home/pages/quejas/quejas';
-import { ReclamosComponent } from './home/pages/reclamos/reclamos';
-import { SugerenciasComponent } from './home/pages/sugerencias/sugerencias';
-import { ConsultarComponent } from './home/consultar/consultar';
-import { MisPqrsComponent } from './home/mis-pqrs/mis-pqrs';
-import { ResetPasswordComponent } from './reset-password/reset.password';
-import { AdminComponent } from './admin/admin';
-import { UsuariosComponent } from './admin/usuarios/usuarios';
-import { FuncionarioComponent } from './funcionario/funcionario';
-import { SolicitudesComponent } from './funcionario/solicitudes/solicitudes';
-import { AsignarSolicitudesComponent } from './admin/asignar-solicitudes/asignar-solicitudes';
-import { EstadisticasComponent } from './admin/estadisticas/estadisticas';
+import { authGuard } from './core/guards/auth.guard';
+import { roleGuard } from './core/guards/role.guard';
+import { ROL } from './core/models/pqrs.types';
 
+/**
+ * Mapa de acceso por rol.
+ *
+ * PÚBLICO — el ciudadano puede radially sin cuenta: por eso las cuatro páginas
+ * de formulario no llevan `authGuard`. Si hay sesión, el formulario adjunta el
+ * `profile_id`; si no, la radicación queda anónima.
+ *
+ * RLS debe permitir `INSERT` anónimo en `requests` y `SELECT` por `ref_number`
+ * para que esto siga funcionando una vez se cierren las políticas.
+ */
 export const routes: Routes = [
-  { path: '', component: HomeComponent },
-  { path: 'home', redirectTo: '', pathMatch: 'full' },
-  { path: 'dashboard', component: DashboardComponent },
-  { path: 'peticiones', component: PeticionesComponent },
-  { path: 'quejas', component: QuejasComponent },
-  { path: 'reclamos', component: ReclamosComponent },
-  { path: 'sugerencias', component: SugerenciasComponent },
-  { path: 'consultar', component: ConsultarComponent },
-  { path: 'reset-password', component: ResetPasswordComponent },
-  { path: 'admin', component: AdminComponent },
-  { path: 'admin/usuarios', component: UsuariosComponent },
-  { path: 'admin/solicitudes', component: AsignarSolicitudesComponent },
-  { path: 'admin/estadisticas', component: EstadisticasComponent },
-  { path: 'funcionario', component: FuncionarioComponent },
-  { path: 'funcionario/solicitudes', component: SolicitudesComponent },
-  { path: 'mis-pqrs', component: MisPqrsComponent },
+  // ── Público ──────────────────────────────────────────────────────────────
+  {
+    path: '',
+    pathMatch: 'full',
+    loadComponent: () => import('./home/home').then((m) => m.HomeComponent),
+  },
+  {
+    path: 'peticiones',
+    loadComponent: () => import('./home/pages/peticiones/peticiones').then((m) => m.PeticionesComponent),
+  },
+  {
+    path: 'quejas',
+    loadComponent: () => import('./home/pages/quejas/quejas').then((m) => m.QuejasComponent),
+  },
+  {
+    path: 'reclamos',
+    loadComponent: () => import('./home/pages/reclamos/reclamos').then((m) => m.ReclamosComponent),
+  },
+  {
+    path: 'sugerencias',
+    loadComponent: () => import('./home/pages/sugerencias/sugerencias').then((m) => m.SugerenciasComponent),
+  },
+  {
+    path: 'consultar',
+    loadComponent: () => import('./home/consultar/consultar').then((m) => m.ConsultarComponent),
+  },
+  {
+    path: 'reset-password',
+    loadComponent: () => import('./reset-password/reset.password').then((m) => m.ResetPasswordComponent),
+  },
+
+  // ── Ciudadano autenticado ────────────────────────────────────────────────
+  {
+    path: 'dashboard',
+    canActivate: [authGuard, roleGuard],
+    loadComponent: () => import('./dashboard/dashboard').then((m) => m.DashboardComponent),
+  },
+  {
+    path: 'mis-pqrs',
+    canActivate: [authGuard, roleGuard],
+    loadComponent: () => import('./home/mis-pqrs/mis-pqrs').then((m) => m.MisPqrsComponent),
+  },
+
+  // ── Administrador ────────────────────────────────────────────────────────
+  {
+    path: 'admin',
+    canActivate: [authGuard, roleGuard],
+    data: { roles: [ROL.ADMIN] },
+    loadComponent: () => import('./admin/admin').then((m) => m.AdminComponent),
+  },
+  {
+    path: 'admin/usuarios',
+    canActivate: [authGuard, roleGuard],
+    data: { roles: [ROL.ADMIN] },
+    loadComponent: () =>
+      import('./admin/usuarios/usuarios').then((m) => m.UsuariosComponent),
+  },
+  {
+    path: 'admin/solicitudes',
+    canActivate: [authGuard, roleGuard],
+    data: { roles: [ROL.ADMIN] },
+    loadComponent: () =>
+      import('./admin/asignar-solicitudes/asignar-solicitudes').then((m) => m.AsignarSolicitudesComponent),
+  },
+  {
+    path: 'admin/estadisticas',
+    canActivate: [authGuard, roleGuard],
+    data: { roles: [ROL.ADMIN] },
+    loadComponent: () =>
+      import('./admin/estadisticas/estadisticas').then((m) => m.EstadisticasComponent),
+  },
+
+  // ── Funcionario ──────────────────────────────────────────────────────────
+  {
+    path: 'funcionario',
+    canActivate: [authGuard, roleGuard],
+    data: { roles: [ROL.FUNCIONARIO] },
+    loadComponent: () => import('./funcionario/funcionario').then((m) => m.FuncionarioComponent),
+  },
+  {
+    path: 'funcionario/solicitudes',
+    canActivate: [authGuard, roleGuard],
+    data: { roles: [ROL.FUNCIONARIO] },
+    loadComponent: () =>
+      import('./funcionario/solicitudes/solicitudes').then((m) => m.SolicitudesComponent),
+  },
+
+  { path: '**', redirectTo: '' },
 ];
