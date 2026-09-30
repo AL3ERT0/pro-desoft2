@@ -2,7 +2,7 @@
 
 ## Info
 
-**Nombre del proyecto:** PQRS Sincrónico APP WEB
+**Nombre del proyecto:** Proyecto P.Q.R.S. Sincrónico - APP WEB
 **Tipo de proyecto:** Aplicación web
 
 ### Equipo
