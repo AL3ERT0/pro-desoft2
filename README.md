@@ -1,59 +1,69 @@
-# PQRS
+# PQRSync
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.6.
+## Info
 
-## Development server
+**Nombre del proyecto:** PQRS Sincrónico APP WEB
+**Tipo de proyecto:** Aplicación web
 
-To start a local development server, run:
+### Equipo
+
+| Integrante              | Rol           |
+| ----------------------- | ------------- |
+| Adony Gabriel Perea Cuero | Scrum Master |
+| Samuel Cuervo Giraldo | Desarrollador |
+| Ricardo Farid Cuero Ruíz | Desarrollador |
+| Wainer David Arroyo Viveros | Desarrollador |
+
+---
+
+## Ejecucción
+
+Este proyecto fue generado utilizando [Angular CLI](https://github.com/angular/angular-cli) versión **21.2.6**.
+
+### Requisitos previos
+
+Antes de ejecutar el proyecto, asegúrate de tener instalado:
+
+* [Node.js](https://nodejs.org/)
+* Angular CLI versión 21.2.6
+
+Puedes comprobar las versiones instaladas ejecutando:
+
+```bash
+node --version
+ng version
+```
+
+### Instalación de dependencias
+
+Después de clonar o descargar el proyecto, abre una terminal dentro de la carpeta del proyecto y ejecuta:
+
+```bash
+npm install
+```
+
+Este comando instalará todas las dependencias necesarias para ejecutar el proyecto.
+
+### Servidor de desarrollo
+
+Para iniciar el servidor de desarrollo local, ejecuta:
 
 ```bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Una vez iniciado el servidor, abre tu navegador y visita:
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
+```text
+http://localhost:4200/
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+La aplicación se actualizará automáticamente cada vez que modifiques alguno de los archivos fuente.
+
+También puedes utilizar:
 
 ```bash
-ng generate --help
+ng serve --open
 ```
 
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+para iniciar el servidor y abrir automáticamente la aplicación en el navegador.
