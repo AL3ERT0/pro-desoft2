@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { environment } from '../../environments/environment';
 import type { Database, TableInsert, TableRow } from '../core/models/database.types';
@@ -89,10 +89,6 @@ export class SupabaseService {
 
   async signOut() {
     return await this.client.auth.signOut();
-  }
-
-  async getSession() {
-    return await this.client.auth.getSession();
   }
 
   // ── Catálogos ────────────────────────────────────────────────────────────

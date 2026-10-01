@@ -1,16 +1,18 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { SupabaseService } from '../services/supabase.service';
 import { AuthService } from '../core/auth/auth.service';
+import { LogoutService } from '../core/auth/logout.service';
 import { environment } from '../../environments/environment';
 import Swal from 'sweetalert2';
+import { ChromeBannerComponent, ChromeContactComponent, ChromeFooterComponent } from '../shared/chrome';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [RouterModule, FormsModule, CommonModule],
+  imports: [RouterModule, FormsModule, CommonModule, ChromeBannerComponent, ChromeContactComponent, ChromeFooterComponent],
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })
@@ -50,10 +52,17 @@ export class HomeComponent implements OnInit {
   constructor(
     private supabase: SupabaseService,
     private router: Router,
-    private auth: AuthService,
+    // Expuestos al template: el header cambia según haya sesión o no, para que
+    // volver atrás desde un panel no parezca un cierre de sesión.
+    readonly auth: AuthService,
+    readonly logout: LogoutService,
   ) {}
 
   async ngOnInit() {
+    // La portada puede cargar con una sesión ya abierta (por ejemplo al volver
+    // atrás desde un panel): sin esto el header mostraría "Iniciar Sesión".
+    await this.auth.ensureLoaded();
+
     await this.showDepartments();
     await this.showEthnicGroups();
     await this.showDocumentTypes();

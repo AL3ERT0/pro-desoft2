@@ -119,37 +119,3 @@ th, td {
   &:hover:not(:disabled) { opacity: 0.88; }
   &:disabled { opacity: 0.6; cursor: not-allowed; }
 }
-
-.contact-card {
-  background: rgba(255,255,255,0.12);
-  backdrop-filter: blur(10px);
-  border-radius: 12px;
-  padding: 14px 12px;
-  color: white;
-  transition: transform 0.3s;
-
-  &:hover { transform: translateY(-4px); }
-
-  .contact-icon { font-size: 1.4rem; margin-bottom: 6px; }
-  h4 { font-size: 0.88rem; font-weight: 700; margin-bottom: 4px; color: white; }
-  p { font-size: 0.84rem; opacity: 0.85; margin: 0; color: white; }
-}
-
-.footer-copy {
-  flex: 1;
-  text-align: center;
-  font-size: 0.9rem;
-  p { margin: 0; }
-}
-
-.gov-btn {
-  color: white;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 0.9rem;
-  padding: 8px 16px;
-  border-radius: 6px;
-  transition: 0.3s;
-
-  &:hover { background: rgba(255,255,255,0.15); }
-}

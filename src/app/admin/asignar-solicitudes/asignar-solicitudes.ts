@@ -8,12 +8,13 @@ import { NotificationService } from '../../services/notification.service';
 import { AuthService } from '../../core/auth/auth.service';
 import { ESTADO } from '../../core/models/pqrs.types';
 import type { TableRow } from '../../core/models/database.types';
+import { ChromeBannerComponent, ChromeContactComponent, ChromeFooterComponent } from '../../shared/chrome';
 
 type Solicitud = TableRow<'requests'> & { func_id?: string | null };
 
 @Component({
   selector: 'app-asignar-solicitudes',
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, ChromeBannerComponent, ChromeContactComponent, ChromeFooterComponent],
   templateUrl: './asignar-solicitudes.html',
   styleUrls: ['./asignar-solicitudes.scss'],
 })

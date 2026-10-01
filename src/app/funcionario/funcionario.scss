@@ -96,20 +96,6 @@
   margin: 0 0 16px;
 }
 
-.btn-editar {
-  padding: 10px 28px;
-  background: linear-gradient(90deg, #870fa2, #4f1689);
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 0.95rem;
-  font-weight: 600;
-  transition: opacity 0.2s;
-
-  &:hover { opacity: 0.88; }
-}
-
 .cards-section {
   display: flex;
   justify-content: center;
@@ -164,38 +150,4 @@
   transition: opacity 0.2s;
 
   &:hover { opacity: 0.88; }
-}
-
-.contact-card {
-  background: rgba(255,255,255,0.12);
-  backdrop-filter: blur(10px);
-  border-radius: 12px;
-  padding: 14px 12px;
-  color: white;
-  transition: transform 0.3s;
-
-  &:hover { transform: translateY(-4px); }
-
-  .contact-icon { font-size: 1.4rem; margin-bottom: 6px; }
-  h4 { font-size: 0.88rem; font-weight: 700; margin-bottom: 4px; }
-  p { font-size: 0.84rem; opacity: 0.85; margin: 0; }
-}
-
-.footer-copy {
-  flex: 1;
-  text-align: center;
-  font-size: 0.9rem;
-  p { margin: 0; }
-}
-
-.gov-btn {
-  color: white;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 0.9rem;
-  padding: 8px 16px;
-  border-radius: 6px;
-  transition: 0.3s;
-
-  &:hover { background: rgba(255,255,255,0.15); }
 }

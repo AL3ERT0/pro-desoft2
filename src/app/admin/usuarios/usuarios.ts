@@ -6,11 +6,12 @@ import Swal from 'sweetalert2';
 import { SupabaseService } from '../../services/supabase.service';
 import { AuthService } from '../../core/auth/auth.service';
 import type { TableRow } from '../../core/models/database.types';
+import { ChromeBannerComponent, ChromeContactComponent, ChromeFooterComponent } from '../../shared/chrome';
 
 @Component({
   selector: 'app-usuarios',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, ChromeBannerComponent, ChromeContactComponent, ChromeFooterComponent],
   templateUrl: './usuarios.html',
   styleUrls: ['./usuarios.scss'],
 })

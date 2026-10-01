@@ -105,9 +105,11 @@ html, body {
    encapsula los estilos por componente, asi que ahi se emitia una copia
    por pantalla (~818 bytes cada una). Al ser identico en todas, va aqui
    global: se emite una vez y desaparece de los budgets anyComponentStyle.
-   NO se unifican aqui .header, .nav, .logout-btn, .logo, .contact-card,
-   .footer-copy ni .gov-btn: difieren entre pantallas y esas diferencias
-   siguen declarandose en el componente que las necesita.
+   NO se unifican aqui .header, .nav, .logout-btn ni .logo: difieren entre
+   pantallas y esas diferencias siguen declarandose en el componente que las
+   necesita. .contact-card, .footer-copy y .gov-btn si viven aqui porque el
+   markup que los usa esta en los componentes de chrome; al estar encapsulado,
+   un .scss de pantalla ya no los alcanzaria.
    ============================================================ */
 .top-banner {
   background: #0A43B6;
@@ -145,6 +147,34 @@ html, body {
   margin: 0 auto;
 }
 
+.contact-card {
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 14px 12px;
+  color: white;
+  transition: transform 0.3s;
+
+  &:hover { transform: translateY(-4px); }
+
+  .contact-icon { font-size: 1.4rem; margin-bottom: 6px; }
+
+  h4 {
+    font-size: 0.88rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+    margin-top: 0;
+    color: white;
+  }
+
+  p {
+    font-size: 0.84rem;
+    opacity: 0.85;
+    margin: 0;
+    color: white;
+  }
+}
+
 .footer {
   background: #0A43B6;
   color: white;
@@ -171,4 +201,25 @@ html, body {
   max-width: 200px;
   height: 50px;
   object-fit: contain;
+}
+
+.footer-copy {
+  flex: 1;
+  text-align: center;
+  font-size: 0.9rem;
+
+  p { margin: 0; }
+}
+
+.gov-btn {
+  display: inline-block;
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 8px 16px;
+  border-radius: 6px;
+  transition: 0.3s;
+
+  &:hover { background: rgba(255,255,255,0.15); }
 }

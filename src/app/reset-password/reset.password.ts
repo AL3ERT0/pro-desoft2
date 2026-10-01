@@ -5,11 +5,12 @@ import { CommonModule } from '@angular/common';
 import { SupabaseService } from '../services/supabase.service';
 import { environment } from '../../environments/environment';
 import Swal from 'sweetalert2';
+import { ChromeBannerComponent } from '../shared/chrome';
 
 @Component({
   selector: 'app-reset-password',
   standalone: true,
-  imports: [FormsModule, CommonModule],
+  imports: [FormsModule, CommonModule, ChromeBannerComponent],
   templateUrl: './reset.password.html',
   styleUrls: ['./reset.password.scss'],
 })

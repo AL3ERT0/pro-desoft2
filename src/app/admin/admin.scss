@@ -8,20 +8,6 @@
   background: #f8f9fa;
 }
 
-.admin-container .top-banner {
-  background: #0A43B6;
-  padding: 8px 20px;
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-}
-
-.admin-container .top-banner-logo-img {
-  width: auto;
-  height: 30px;
-  object-fit: contain;
-}
-
 .admin-container .header {
   display: flex;
   justify-content: space-between;
@@ -167,90 +153,6 @@
   &:hover { opacity: 0.88; }
 }
 
-.admin-container .contact-section {
-  padding: 20px 30px;
-  background: linear-gradient(135deg, #870fa2, #4f1689);
-  text-align: center;
-
-  h3 {
-    color: white;
-    font-size: 1.3rem;
-    font-weight: 800;
-    margin-bottom: 18px;
-    margin-top: 0;
-  }
-}
-
-.admin-container .contact-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 12px;
-  max-width: 700px;
-  margin: 0 auto;
-}
-
-.admin-container .contact-card {
-  background: rgba(255,255,255,0.12);
-  backdrop-filter: blur(10px);
-  border-radius: 12px;
-  padding: 14px 12px;
-  color: white;
-  transition: transform 0.3s;
-
-  &:hover { transform: translateY(-4px); }
-
-  .contact-icon { font-size: 1.4rem; margin-bottom: 6px; }
-  h4 { font-size: 0.88rem; font-weight: 700; margin-bottom: 4px; color: white; margin-top: 0; }
-  p { font-size: 0.84rem; opacity: 0.85; margin: 0; color: white; }
-}
-
-.admin-container .footer {
-  background: #0A43B6;
-  color: white;
-  padding: 20px 30px;
-}
-
-.admin-container .footer-brand {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  flex-wrap: wrap;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.admin-container .footer-logo-box {
-  height: 50px;
-  display: flex;
-  align-items: center;
-}
-
-.admin-container .footer-logo-img {
-  max-width: 200px;
-  height: 50px;
-  object-fit: contain;
-}
-
-.admin-container .footer-copy {
-  flex: 1;
-  text-align: center;
-  font-size: 0.9rem;
-  p { margin: 0; }
-}
-
-.admin-container .gov-btn {
-  color: white;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 0.9rem;
-  padding: 8px 16px;
-  border-radius: 6px;
-  transition: 0.3s;
-
-  &:hover { background: rgba(255,255,255,0.15); }
-}
-
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
@@ -264,5 +166,4 @@
   .admin-container .cards-section { grid-template-columns: 1fr; }
   .admin-container .header { padding: 14px 16px; }
   .admin-container .bienvenido-text { display: none; }
-  .admin-container .footer-brand { flex-direction: column; text-align: center; }
 }

@@ -12,13 +12,14 @@ import {
   type Clasificacion,
 } from '../../core/models/pqrs.types';
 import type { TableRow } from '../../core/models/database.types';
+import { ChromeBannerComponent, ChromeContactComponent, ChromeFooterComponent } from '../../shared/chrome';
 
 type Solicitud = TableRow<'requests'> & { archivos: TableRow<'request_paths'>[] };
 
 @Component({
   selector: 'app-solicitudes',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, ChromeBannerComponent, ChromeContactComponent, ChromeFooterComponent],
   templateUrl: './solicitudes.html',
   styleUrls: ['./solicitudes.scss'],
 })

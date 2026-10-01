@@ -5,11 +5,12 @@ import { CommonModule } from '@angular/common';
 import Swal from 'sweetalert2';
 import { SupabaseService } from '../../services/supabase.service';
 import type { TableRow } from '../../core/models/database.types';
+import { ChromeBannerComponent, ChromeContactComponent, ChromeFooterComponent } from '../../shared/chrome';
 
 @Component({
   selector: 'app-consultar',
   standalone: true,
-  imports: [FormsModule, RouterModule, CommonModule],
+  imports: [FormsModule, RouterModule, CommonModule, ChromeBannerComponent, ChromeContactComponent, ChromeFooterComponent],
   templateUrl: './consultar.html',
   styleUrl: './consultar.scss',
 })

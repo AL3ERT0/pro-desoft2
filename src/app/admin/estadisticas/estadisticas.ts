@@ -15,6 +15,7 @@ import {
 } from '../../core/models/pqrs.types';
 import { aClasificacion, aEstado, diasHabilesEntre, normalizar } from '../../core/utils/pqrs.utils';
 import type { TableRow } from '../../core/models/database.types';
+import { ChromeBannerComponent, ChromeContactComponent } from '../../shared/chrome';
 
 type Solicitud = TableRow<'requests'>;
 
@@ -51,7 +52,7 @@ interface KpiTiempo {
 @Component({
   selector: 'app-estadisticas',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ChromeBannerComponent, ChromeContactComponent],
   templateUrl: './estadisticas.html',
   styleUrl: './estadisticas.scss',
 })

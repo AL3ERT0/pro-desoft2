@@ -32,6 +32,3 @@ export const roleGuard: CanActivateFn = async (route) => {
 
   return router.createUrlTree([auth.rutaInicio()]);
 };
-
-/** Atajo legible para declarar rutas: `roles: [ROL.ADMIN]`. */
-export { ROL };

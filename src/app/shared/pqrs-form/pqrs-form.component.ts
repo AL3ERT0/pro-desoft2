@@ -8,6 +8,7 @@ import { AuthService } from '../../core/auth/auth.service';
 import { ESTADO } from '../../core/models/pqrs.types';
 import { type PqrConfig } from '../pqrs-config';
 import { NotificationService } from '../../services/notification.service';
+import { ChromeBannerComponent, ChromeContactComponent, ChromeFooterComponent } from '../chrome';
 
 const LIMITE_MB = 100;
 const LIMITE_BYTES = LIMITE_MB * 1024 * 1024;
@@ -17,7 +18,7 @@ const TIPOS_PERMITIDOS = ['application/pdf', 'image/png', 'image/jpeg', 'image/w
 @Component({
   selector: 'app-pqr-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, ChromeBannerComponent, ChromeContactComponent, ChromeFooterComponent],
   templateUrl: './pqrs-form.component.html',
   styleUrl: './pqrs-form.component.scss',
 })

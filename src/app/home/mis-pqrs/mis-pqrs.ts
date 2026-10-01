@@ -7,11 +7,12 @@ import { COLOR_ESTADO, type Estado } from '../../core/models/pqrs.types';
 import { aEstado } from '../../core/utils/pqrs.utils';
 import Swal from 'sweetalert2';
 import type { TableRow } from '../../core/models/database.types';
+import { ChromeBannerComponent, ChromeContactComponent, ChromeFooterComponent } from '../../shared/chrome';
 
 @Component({
   selector: 'app-mis-pqrs',
   standalone: true,
-  imports: [RouterModule, CommonModule],
+  imports: [RouterModule, CommonModule, ChromeBannerComponent, ChromeContactComponent, ChromeFooterComponent],
   templateUrl: './mis-pqrs.html',
   styleUrl: './mis-pqrs.scss',
 })
@@ -29,7 +30,6 @@ export class MisPqrsComponent implements OnInit {
   readonly respuestaDetalle = signal<TableRow<'request_responses'> | null>(null);
 
   /** Evita mostrar una lista vacía si `profile_id` fuera nulo. */
-  private readonly puedeConsultar = computed(() => this.auth.estaAutenticado());
 
   async ngOnInit(): Promise<void> {
     try {

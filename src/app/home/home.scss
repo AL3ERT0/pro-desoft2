@@ -4,22 +4,11 @@
   line-height: 1.6;
 }
 
-.top-banner-logo {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.top-banner-logo-img {
-  width: auto;
-  height: 30px;
-  object-fit: contain;
-}
-
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 16px;
   padding: 20px;
   background: #fff;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
@@ -35,20 +24,75 @@
   color: #870fa2;
 }
 
+/* `nowrap` mantiene las tres piezas en una sola línea: el nombre es lo único
+   que cede espacio (ver `.bienvenida`) y los botones ya pueden encogerse, así
+   que no hay nada que forzar un salto. El `wrap` del breakpoint móvil es el
+   único punto donde se admite el apilado. */
+.nav {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 8px 12px;
+  min-width: 0;
+}
 
+.bienvenida {
+  flex: 0 1 auto;
+  min-width: 8ch;
+  max-width: 34ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #333;
+  font-size: 0.95rem;
+  font-weight: 600;
+  /* Igual que la altura de los botones: al centrar todo con `align-items:
+     center` las tres piezas comparten eje. */
+  line-height: 40px;
+}
+
+/* `font: inherit` y alto fijo porque "Ir a mi panel" es un <a> y "Cerrar
+   sesión" un <button>: sin esto heredan line-height distinto y el <a> quedaba
+   más alto que el <button>, descuadrando la fila. */
 .login-btn {
-  padding: 10px 20px;
+  font: inherit;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 20px;
+  white-space: nowrap;
   background: #870fa2;
   color: white;
-  border: none;
+  border: 1px solid #870fa2;
   border-radius: 5px;
   cursor: pointer;
   text-decoration: none;
-  display: inline-block;
 }
 
 .login-btn:hover {
   background: #6a0d7a;
+}
+
+.login-btn[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 640px) {
+  .header {
+    flex-wrap: wrap;
+    padding: 16px;
+  }
+
+  .nav {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .bienvenida {
+    max-width: 100%;
+  }
 }
 
 /* HERO */
@@ -128,118 +172,6 @@
 
 .section-btn:hover {
   background: #6a0d7a;
-}
-
-/* CONTACT */
-.contact-section {
-  padding: 50px 20px;
-  background: #e9ecef;
-  text-align: center;
-}
-
-.contact-section h3 {
-  color: #870fa2;
-  margin-bottom: 20px;
-}
-
-/* FOOTER */
-.footer {
-  background: #0A43B6;
-  color: white;
-  padding: 20px;
-}
-
-.footer-brand {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 30px;
-  flex-wrap: wrap;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.footer-logo {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.footer-logo-box {
-  width: auto;
-  height: 60px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  flex-shrink: 0;
-  background: transparent;
-}
-
-.footer-logo-img {
-  width: auto;
-  max-width: 260px;
-  height: 60px;
-  display: block;
-  object-fit: contain;
-}
-
-.footer-copy {
-  flex: 1 1 320px;
-  text-align: center;
-}
-
-.footer-copy p {
-  margin: 0;
-  font-size: 0.95rem;
-}
-
-.gov-btn {
-  display: inline-block;
-  background: transparent;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 0.95rem;
-  transition: all 0.3s ease;
-  white-space: nowrap;
-}
-
-.gov-btn:hover {
-  background: rgba(255,255,255,0.15);
-  transform: translateY(-2px);
-}
-/* CONTACTO MEJORADO */
-.contact-section {
-  padding: 20px 30px;
-  background: linear-gradient(135deg, #870fa2, #4f1689);
-  text-align: center;
-}
-
-.contact-section h3 {
-  color: white;
-  font-size: 1.3rem;
-  font-weight: 800;
-  margin-bottom: 18px;
-  margin-top: 0;
-}
-
-.contact-card {
-  background: rgba(255,255,255,0.12);
-  backdrop-filter: blur(10px);
-  border-radius: 12px;
-  padding: 14px 12px;
-  color: white;
-  transition: transform 0.3s;
-
-  &:hover { transform: translateY(-4px); }
-
-  .contact-icon { font-size: 1.4rem; margin-bottom: 6px; }
-  h4 { font-size: 0.88rem; font-weight: 700; margin-bottom: 4px; }
-  p { font-size: 0.84rem; opacity: 0.85; margin: 0; }
 }
 
 /* MODAL OVERLAY */

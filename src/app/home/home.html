@@ -1,16 +1,19 @@
 <div class="landing-container">
-  <div class="top-banner">
-    <div class="top-banner-logo">
-      <img src="/assets/gov-logo.png" alt="GOV.CO" class="top-banner-logo-img" />
-    </div>
-  </div>
+  <app-chrome-banner></app-chrome-banner>
 
   <header class="header">
     <div class="logo">
       <h1>PQRSync</h1>
     </div>
     <nav class="nav">
-      <button class="login-btn" (click)="abrirLogin()">Iniciar Sesión</button>
+      <ng-container *ngIf="auth.estaAutenticado(); else anonimo">
+        <span class="bienvenida" [title]="auth.nombreMostrar()">Hola, {{ auth.nombreMostrar() }}</span>
+        <a class="login-btn" [routerLink]="auth.rutaInicio()">Ir a mi panel</a>
+        <button class="login-btn" type="button" (click)="logout.cerrar()" [disabled]="logout.enCurso()">Cerrar sesión</button>
+      </ng-container>
+      <ng-template #anonimo>
+        <button class="login-btn" type="button" (click)="abrirLogin()">Iniciar Sesión</button>
+      </ng-template>
     </nav>
   </header>
 
@@ -42,47 +45,8 @@
     </div>
   </section>
 
-  <!-- CONTACTO -->
-  <section class="contact-section">
-    <h3>Contacto</h3>
-    <div class="contact-grid">
-      <div class="contact-card">
-        <div class="contact-icon">📧</div>
-        <h4>Correo Electrónico</h4>
-        <p>pqrs@entidad.gov.co</p>
-      </div>
-      <div class="contact-card">
-        <div class="contact-icon">📞</div>
-        <h4>Teléfono</h4>
-        <p>(2) 241-3890</p>
-      </div>
-      <div class="contact-card">
-        <div class="contact-icon">📍</div>
-        <h4>Dirección</h4>
-        <p>Cra. 5 #12-34, Buenaventura, Valle del Cauca</p>
-      </div>
-      <div class="contact-card">
-        <div class="contact-icon">🕐</div>
-        <h4>Horario de atención</h4>
-        <p>Lunes a Viernes 8:00am - 5:00pm</p>
-      </div>
-    </div>
-  </section>
-
-  <footer class="footer">
-    <div class="footer-brand">
-      <div class="footer-logo">
-        <div class="footer-logo-box">
-          <img src="/assets/gov-logo.png" alt="GOV.CO" class="footer-logo-img" />
-        </div>
-      </div>
-      <div class="footer-copy">
-        <p>&copy; 2026 PQRSync. Todos los derechos reservados.</p>
-      </div>
-      <a href="https://www.gov.co/" target="_blank" class="gov-btn">Conoce GOV.CO aquí</a>
-    </div>
-  </footer>
-
+  <app-chrome-contact></app-chrome-contact>
+  <app-chrome-footer></app-chrome-footer>
 </div>
 
 <!-- MODAL OVERLAY -->
