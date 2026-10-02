@@ -9,15 +9,8 @@
 
 | Integrante              | Rol           |
 | ----------------------- | ------------- |
-| Adony Gabriel Perea Cuero | Scrum Master |
-| Samuel Cuervo Giraldo | Desarrollador |
 | Ricardo Farid Cuero Ruíz | Desarrollador |
-| Wainer David Arroyo Viveros | Desarrollador |
-| Espinosa Valencia Keni David | Desarrollador |
-| Asprilla Ibarguen Yeremy Estiven | Desarrollador |
-| Gamboa Mosquera Ronald Stiven | Desarrollador |
-| Ramirez Lerma Alberto | Desarrollador |
-| Sinisterra Garces Jhan Arinson | Desarrollador |
+
 
 ---
 
