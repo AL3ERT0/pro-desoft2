@@ -10,8 +10,8 @@
 | Integrante              | Rol           |
 | ----------------------- | ------------- |
 | Ricardo Farid Cuero Ruíz | Desarrollador (Backend) |
-| NOMBRE AQUÍ | ROL AQUÍ |
-
+| adony gabriel perea cuero| desarrollador |
+| Alberto Ramirez Lerma| desarrollador |
 
 ---
 
