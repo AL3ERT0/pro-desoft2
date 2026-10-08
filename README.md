@@ -11,6 +11,7 @@
 | ----------------------- | ------------- |
 | Ricardo Farid Cuero Ruíz | Desarrollador (Backend) |
 | adony gabriel perea cuero| desarrollador |
+| Alberto Ramiréz Lerma| desarrollador |
 
 
 ---
